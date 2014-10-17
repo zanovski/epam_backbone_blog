@@ -97,6 +97,7 @@ var Posts = Backbone.Collection.extend({
 
 app.Posts = new Posts();
 var AddPostModalWindow = Backbone.View.extend({
+    tagName: 'div',
     template: app.tmp['add_post_modal.hbs'],
     events: {
         'click .close': 'remove',
@@ -116,9 +117,8 @@ var AddPostModalWindow = Backbone.View.extend({
             author: this.$('#author').val(),
             image: this.$('#image').val()
         };
-        post = new app.Post(post);
+        post = new app.Post(post); //todo нужно исправить добавление в шаблон.
         post.save();
-        app.Posts.reset();
         this.remove();
     }
 });
@@ -131,19 +131,20 @@ var MainView = Backbone.View.extend({
     },
     initialize: function() {
         this.render();
+        this.viewContainer = this.$el.find('#view');
     },
     render: function() {
         this.$el.html(this.template());
         return this;
     },
     addPost: function() {
-        var div = $('<div></div>');
-        this.$el.append(div);
-        new AddPostModalWindow({el: div});
+        var modal = new AddPostModalWindow();
+        this.$el.append(modal.el);
     },
     changePageView: function(subView) {
-        var view = this.$el.find('#view');
-        view.html('').append(subView);
+        this.subView && this.subView.remove();
+        this.subView = subView;
+        this.viewContainer.append(this.subView.render().el);
     }
 });
 
@@ -190,12 +191,12 @@ var Router = Backbone.Router.extend({
         Backbone.history.start();
     },
     index: function() {
-        app.view.changePageView((new IndexView()).render().el);
+        app.view.changePageView(new IndexView());
     },
     postPage: function(id) {
-        app.view.changePageView((new PostView({
+        app.view.changePageView(new PostView({
             model: app.Posts.findWhere({_id:id})
-        })).render().el)
+        }))
     }
 });
 

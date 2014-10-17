@@ -1,4 +1,5 @@
 var AddPostModalWindow = Backbone.View.extend({
+    tagName: 'div',
     template: app.tmp['add_post_modal.hbs'],
     events: {
         'click .close': 'remove',
@@ -32,19 +33,20 @@ var MainView = Backbone.View.extend({
     },
     initialize: function() {
         this.render();
+        this.viewContainer = this.$el.find('#view');
     },
     render: function() {
         this.$el.html(this.template());
         return this;
     },
     addPost: function() {
-        var div = $('<div></div>');
-        this.$el.append(div);
-        new AddPostModalWindow({el: div});
+        var modal = new AddPostModalWindow();
+        this.$el.append(modal.el);
     },
     changePageView: function(subView) {
-        var view = this.$el.find('#view');
-        view.html('').append(subView);
+        this.subView && this.subView.remove();
+        this.subView = subView;
+        this.viewContainer.append(this.subView.render().el);
     }
 });
 

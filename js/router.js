@@ -9,12 +9,12 @@ var Router = Backbone.Router.extend({
         Backbone.history.start();
     },
     index: function() {
-        app.view.changePageView((new IndexView()).render().el);
+        app.view.changePageView(new IndexView());
     },
     postPage: function(id) {
-        app.view.changePageView((new PostView({
+        app.view.changePageView(new PostView({
             model: app.Posts.findWhere({_id:id})
-        })).render().el)
+        }))
     }
 });
 
