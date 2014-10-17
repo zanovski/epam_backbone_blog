@@ -1,0 +1,13 @@
+<div class="row">
+    <div class="col-xs-12">
+        {{#each posts}}
+            <div class="panel panel-default" style="box-shadow: 0 0 10px rgba(0,0,0,0.2)">
+                <div class="panel-body" style="background-image: url({{image}}); background-repeat: no-repeat; background-size: 400px; background-position:  750px 0;">
+                    <a href="#post/{{_id}}"><h4 style="display: inline-block">{{title}}</h4></a>
+                    <p>{{#preview body}}{{/preview}}</p>
+                    <small>created by: <a href="#/maybe/path/to/user/profile">{{author}}</a></small> <small> at {{date}}</small>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</div>
