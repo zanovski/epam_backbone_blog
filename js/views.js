@@ -26,6 +26,32 @@ var AddPostModalWindow = Backbone.View.extend({
     }
 });
 
+var EditPostModalWindow = Backbone.View.extend({
+    tagName: 'div',
+    template: app.tmp['edit_post_modal.hbs'],
+    events: {
+        'click .close': 'remove',
+        'click #save': 'saveAndClose'
+    },
+    initialize: function() {
+        this.render();
+    },
+    render: function() {
+        this.$el.append(this.template({post:this.model.attributes}));
+        return this;
+    },
+    saveAndClose: function() {
+        this.model.set({
+            title: this.$('#title').val(),
+            body: this.$('#article').val(),
+            author: this.$('#author').val(),
+            image: this.$('#image').val()
+        });
+        Backbone.sync('update', this.model);
+        this.remove();
+    }
+});
+
 var MainView = Backbone.View.extend({
     el: $('#app'),
     template: app.tmp['main_view.hbs'],
@@ -68,7 +94,8 @@ var IndexView = Backbone.View.extend({
 var PostView = Backbone.View.extend({
     template: app.tmp['post_page.hbs'],
     events: {
-        'click #del': 'removePost'
+        'click #del': 'removePost',
+        'click #edit': 'editPost'
     },
     initialize: function() {
         this.listenTo(this.model, 'all', this.render);
@@ -81,5 +108,11 @@ var PostView = Backbone.View.extend({
     removePost: function() {
         this.model.destroy();
         app.Router.navigate('/', true);
+    },
+    editPost: function() {
+        var modal = new EditPostModalWindow({
+            model: this.model
+        });
+        this.$el.append(modal.el);
     }
 });

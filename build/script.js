@@ -11,6 +11,21 @@ this["app"]["tmp"]["add_post_modal.hbs"] = Handlebars.template({"compiler":[6,">
 
 
 
+this["app"]["tmp"]["edit_post_modal.hbs"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+  var stack1, lambda=this.lambda, escapeExpression=this.escapeExpression;
+  return "<div id=\"myModal\" class=\"modal fade in\" style=\"display: block;\">\r\n    <div class=\"modal-dialog\">\r\n        <div class=\"modal-content\">\r\n\r\n            <div class=\"modal-header\">\r\n                <button type=\"button\" class=\"close\" data-dismiss=\"modal\"><span aria-hidden=\"true\">×</span><span class=\"sr-only\">Close</span></button>\r\n                <h4 class=\"modal-title\" id=\"myModalLabel\">Edit article</h4>\r\n            </div>\r\n            <div class=\"modal-body\">\r\n                <form class=\"form-horizontal\" name=\"newArticle\" novalidate>\r\n                    <div class=\"form-group\">\r\n                        <label for=\"title\" class=\"col-sm-2 control-label\">Title</label>\r\n                        <div class=\"col-sm-10\">\r\n                            <input type=\"text\" class=\"form-control\" id=\"title\" value=\""
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.post : depth0)) != null ? stack1.title : stack1), depth0))
+    + "\" placeholder=\"Title\" required>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\">\r\n                        <label for=\"image\" class=\"col-sm-2 control-label\">Image</label>\r\n                        <div class=\"col-sm-10\">\r\n                            <input type=\"text\" class=\"form-control\" id=\"image\" value=\""
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.post : depth0)) != null ? stack1.image : stack1), depth0))
+    + "\" placeholder=\"http://images.com/myImage.jpg\">\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\">\r\n                        <label for=\"article\" class=\"col-sm-2 control-label\">Article</label>\r\n                        <div class=\"col-sm-10\">\r\n                            <textarea class=\"form-control\" id=\"article\"\r\n                                      placeholder=\"Article\" style=\"resize: none\"\r\n                                      rows=\"4\">"
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.post : depth0)) != null ? stack1.body : stack1), depth0))
+    + "</textarea>\r\n                        </div>\r\n                    </div>\r\n                    <div class=\"form-group\">\r\n                        <label for=\"author\" class=\"col-sm-2 control-label\">Author</label>\r\n                        <div class=\"col-sm-10\">\r\n                            <input type=\"text\" class=\"form-control\" id=\"author\" placeholder=\"Name\" value=\""
+    + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.post : depth0)) != null ? stack1.author : stack1), depth0))
+    + "\" required>\r\n                        </div>\r\n                    </div>\r\n                </form>\r\n\r\n\r\n            </div>\r\n            <div class=\"modal-footer\">\r\n                <button type=\"button\" id=\"save\" class=\"btn btn-primary\" >Save</button>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</div>";
+},"useData":true});
+
+
+
 this["app"]["tmp"]["main_view.hbs"] = Handlebars.template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
   return "<nav class=\"navbar navbar-default navbar-inverse\" role=\"navigation\">\r\n    <div class=\"container\">\r\n        <div class=\"navbar-header\">\r\n            <a class=\"navbar-brand\" href=\"#/\">Sample-blog</a>\r\n        </div>\r\n        <div class=\"collapse navbar-collapse\" id=\"bs-example-navbar-collapse-1\">\r\n            <ul class=\"nav navbar-nav\">\r\n                <li><a href=\"#/\">Home</a></li>\r\n            </ul>\r\n            <div class=\"navbar-right\">\r\n                <button id=\"add\" class=\"btn btn-success navbar-btn\">add Post</button>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</nav>\r\n\r\n<div class=\"container\" id=\"view\"></div>";
   },"useData":true});
@@ -58,7 +73,7 @@ this["app"]["tmp"]["post_page.hbs"] = Handlebars.template({"1":function(depth0,h
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.post : depth0)) != null ? stack1.body : stack1), depth0))
     + "</p>\r\n        <small class=\"text-muted\">By "
     + escapeExpression(lambda(((stack1 = (depth0 != null ? depth0.post : depth0)) != null ? stack1.author : stack1), depth0))
-    + "</small>\r\n    </div>\r\n    <div class=\"col-xs-2\">\r\n        <button class=\"btn btn-warning btn-lg btn-block\"><span class=\"glyphicon glyphicon-pencil\"></span> Edit</button>\r\n        <button id=\"del\" class=\"btn btn-danger btn-lg btn-block\"><span class=\"glyphicon glyphicon-remove\"></span> Remove</button>\r\n    </div>\r\n</div>\r\n";
+    + "</small>\r\n    </div>\r\n    <div class=\"col-xs-2\">\r\n        <button id=\"edit\" class=\"btn btn-warning btn-lg btn-block\"><span class=\"glyphicon glyphicon-pencil\"></span> Edit</button>\r\n        <button id=\"del\" class=\"btn btn-danger btn-lg btn-block\"><span class=\"glyphicon glyphicon-remove\"></span> Remove</button>\r\n    </div>\r\n</div>\r\n";
 },"useData":true});
 app.Post = Backbone.Model.extend({
 
@@ -118,6 +133,32 @@ var AddPostModalWindow = Backbone.View.extend({
     }
 });
 
+var EditPostModalWindow = Backbone.View.extend({
+    tagName: 'div',
+    template: app.tmp['edit_post_modal.hbs'],
+    events: {
+        'click .close': 'remove',
+        'click #save': 'saveAndClose'
+    },
+    initialize: function() {
+        this.render();
+    },
+    render: function() {
+        this.$el.append(this.template({post:this.model.attributes}));
+        return this;
+    },
+    saveAndClose: function() {
+        this.model.set({
+            title: this.$('#title').val(),
+            body: this.$('#article').val(),
+            author: this.$('#author').val(),
+            image: this.$('#image').val()
+        });
+        Backbone.sync('update', this.model);
+        this.remove();
+    }
+});
+
 var MainView = Backbone.View.extend({
     el: $('#app'),
     template: app.tmp['main_view.hbs'],
@@ -160,7 +201,8 @@ var IndexView = Backbone.View.extend({
 var PostView = Backbone.View.extend({
     template: app.tmp['post_page.hbs'],
     events: {
-        'click #del': 'removePost'
+        'click #del': 'removePost',
+        'click #edit': 'editPost'
     },
     initialize: function() {
         this.listenTo(this.model, 'all', this.render);
@@ -173,6 +215,12 @@ var PostView = Backbone.View.extend({
     removePost: function() {
         this.model.destroy();
         app.Router.navigate('/', true);
+    },
+    editPost: function() {
+        var modal = new EditPostModalWindow({
+            model: this.model
+        });
+        this.$el.append(modal.el);
     }
 });
 var Router = Backbone.Router.extend({
