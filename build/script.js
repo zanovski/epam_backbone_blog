@@ -111,8 +111,9 @@ var AddPostModalWindow = Backbone.View.extend({
             author: this.$('#author').val(),
             image: this.$('#image').val()
         };
-        post = new app.Post(post); //todo нужно исправить добавление в шаблон.
+        post = new app.Post(post);
         post.save();
+        app.Posts.push(post);
         this.remove();
     }
 });
