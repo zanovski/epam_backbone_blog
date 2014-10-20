@@ -18,7 +18,6 @@ app.Post = Backbone.Model.extend({
     validate: function(attr) {
         console.log('validate');
         if(!attr.title || !attr.body || !attr.author){
-            this.destroy();
             return true;
         }
     }

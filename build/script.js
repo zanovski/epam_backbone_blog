@@ -95,7 +95,6 @@ app.Post = Backbone.Model.extend({
     validate: function(attr) {
         console.log('validate');
         if(!attr.title || !attr.body || !attr.author){
-            this.destroy();
             return true;
         }
     }
@@ -127,8 +126,10 @@ var AddPostModalWindow = Backbone.View.extend({
             image: this.$('#image').val()
         };
         post = new app.Post(post);
-        post.save();
-        app.Posts.push(post);
+        if(post.isValid()) {
+            post.save();
+            app.Posts.push(post);
+        }
         this.remove();
     }
 });
@@ -148,12 +149,15 @@ var EditPostModalWindow = Backbone.View.extend({
         return this;
     },
     saveAndClose: function() {
-        this.model.set({
+        var update = {
             title: this.$('#title').val(),
             body: this.$('#article').val(),
             author: this.$('#author').val(),
             image: this.$('#image').val()
-        });
+        };
+        this.model.set(_.omit(update, function(value) {
+            return value === '';
+        }));
         Backbone.sync('update', this.model);
         this.remove();
     }
