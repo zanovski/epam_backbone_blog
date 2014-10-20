@@ -25,13 +25,13 @@ module.exports = function(grunt) {
             },
             dist: {
                 src: [
-                    'js/app.js',
                     'js/HB.js',
                     'js/tmp.js',
                     'js/models.js',
                     'js/collection.js',
                     'js/views.js',
-                    'js/router.js'
+                    'js/router.js',
+                    'js/app.js'
                 ],
                 dest: 'build/script.js'
             }

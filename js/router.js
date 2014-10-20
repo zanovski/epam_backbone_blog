@@ -17,5 +17,3 @@ var Router = Backbone.Router.extend({
         }))
     }
 });
-
-app.Router = new Router();

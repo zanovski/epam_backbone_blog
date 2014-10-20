@@ -1,5 +1,4 @@
-/*! app - v0.0.0 - 2014-10-17 */
-var app = app || {};
+/*! app - v0.0.0 - 2014-10-20 */
 Handlebars.registerHelper('preview', function(string) {
     return string ? string.substr(0, 100) : '';
 });
@@ -89,13 +88,8 @@ app.Post = Backbone.Model.extend({
 });
 var Posts = Backbone.Collection.extend({
     url: 'http://restik.herokuapp.com/post',
-    model: app.Post,
-    initialize: function() {
-        this.fetch();
-    }
+    model: app.Post
 });
-
-app.Posts = new Posts();
 var AddPostModalWindow = Backbone.View.extend({
     tagName: 'div',
     template: app.tmp['add_post_modal.hbs'],
@@ -199,5 +193,13 @@ var Router = Backbone.Router.extend({
         }))
     }
 });
-
-app.Router = new Router();
+app.init = function() {
+    app.Posts = new Posts();
+    app.Posts.on('loaded', function() {
+        app.Router = new Router();
+    });
+    app.Posts.fetch({success:function() {
+        app.Posts.trigger('loaded');
+    }});
+};
+app.init();
